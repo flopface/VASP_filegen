@@ -3,6 +3,8 @@
 import argparse
 import os
 
+POTCAR_PATHS = 'potcars'
+
 def yay_or_neigh(prompt):
   yay = ['Y', 'Yes']
   neigh = ['N', 'No']
@@ -41,6 +43,22 @@ def make_poscar(path, m_symbol, x_symbol, lattic_param, nx, ny, nz):
   with open(os.path.join(path, 'POSCAR'), 'w') as file:
     file.write(file_content)
 
+def make_potcar(path, symbols):
+  file_content = []
+  for symbol in symbols:
+    if os.path.isfile(os.path.join(POTCAR_PATHS, symbol)):
+      with open(os.path.join(POTCAR_PATHS, symbol), 'r') as file:
+        file_content += file.readlines()
+        file_content[-1] += '\n'
+    else:
+      print(f'ERROR : No potcar for {symbol}')
+      exit()
+  
+  with open(os.path.join(path, 'POTCAR'), 'w') as file:
+    file.writelines(file_content)
+
+def make_incar(path, )
+
 def main(args):
   print(f'Chemical formula: {args.m_symbol}{args.x_symbol}\nLattice parameter: {args.lattic_param:.3f} \u212b\nCell size: {args.nx}x{args.ny}x{args.nz}')
 
@@ -56,7 +74,8 @@ def main(args):
       if os.path.isfile(file): 
         if yay_or_neigh(f'WARNING : File \'{file}\' already exists, overwrite? (y/n) : '): os.remove(file)
         else: exit()
-    
+
+  make_potcar(path, [args.m_symbol, args.x_symbol])
   make_poscar(path, args.m_symbol, args.x_symbol, args.lattic_param, args.nx, args.ny, args.nz)
  
 if __name__ == '__main__':
